@@ -44,12 +44,11 @@ export default function Categories() {
       <SNavbar />
 
       <Container>
+        <SBreadcrumb second="Categories" />
         <SButton
           action={() => navigate("/categories/create")}
           children="Add Categories"
         />
-
-        <SBreadcrumb second="Categories" />
         <Table striped bordered hover>
           <thead>
             <tr>
