@@ -1,11 +1,18 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
 import Categories from "./pages/Categories";
 import CategoryEdit from "./pages/Categories/edit";
 import CategoryCreate from "./pages/Categories/create";
+import { listen } from "./redux/listener";
 
 function App() {
+  useEffect(() => {
+    listen();
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
