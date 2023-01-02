@@ -1,14 +1,16 @@
 import { Card, Container } from "react-bootstrap";
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import { config } from "../../configs";
 import SAlert from "../../components/Alert";
 import SForm from "./Form";
+import { postData } from "../../utils/fetch";
+import { userLogin } from "../../redux/auth/action";
 
 function Signin() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [form, setForm] = useState({
     email: "",
@@ -35,10 +37,8 @@ function Signin() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const res = await axios.post(`${config.url_dev}/cms/auth/signin`, {
-        email: form.email,
-        password: form.password,
-      });
+      const res = await postData("/cms/auth/signin", form);
+      dispatch(userLogin(res.data.token, res.data.role));
 
       setAlert({
         ...alert,
@@ -47,7 +47,6 @@ function Signin() {
 
       setLoading(true);
 
-      localStorage.setItem("token", res.data.token);
       navigate("/");
     } catch (err) {
       console.log(err.response.data.msg);
@@ -60,10 +59,6 @@ function Signin() {
       setLoading(false);
     }
   };
-
-  if (localStorage.getItem("token")) {
-    return <Navigate to="/" replace={true} />;
-  }
 
   return (
     <Container md={12}>
