@@ -9,6 +9,7 @@ import { postData } from "../../utils/fetch";
 import { userLogin } from "../../redux/auth/action";
 
 function Signin() {
+  // console.log(JSON.parse(localStorage.getItem("auth")));
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -35,28 +36,26 @@ function Signin() {
   };
 
   const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const res = await postData("/cms/auth/signin", form);
-      dispatch(userLogin(res.data.token, res.data.role));
+    const res = await postData("/cms/auth/signin", form);
 
+    if (res?.data) {
+      dispatch(userLogin(res.data.token, res.data.role));
       setAlert({
         ...alert,
         status: false,
       });
-
       setLoading(true);
-
       navigate("/");
-    } catch (err) {
-      console.log(err.response.data.msg);
-
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
       setAlert({
         status: true,
-        message: err?.response?.data?.msg || "Internal Server Error",
+        message: res?.response?.data?.msg || "Internal Server Error",
         type: "danger",
       });
-      setLoading(false);
     }
   };
 
