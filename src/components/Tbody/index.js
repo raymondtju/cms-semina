@@ -69,7 +69,7 @@ function Tbody({
                       size={"sm"}
                       action={() => deleteAction(data._id)}
                     >
-                      Delete
+                      Delete {data._id}
                     </SButton>
                   )}
                 </td>
