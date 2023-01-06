@@ -1,83 +1,87 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Container, Spinner, Table } from "react-bootstrap";
-import SBreadcrumb from "../../components/Breadcrumb";
-import SNavbar from "../../components/Navbar";
-import axios from "axios";
-import { config } from "../../configs";
-import SButton from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import { Container } from "react-bootstrap";
+
+import SBreadcrumb from "../../components/Breadcrumb";
+import SButton from "../../components/Button";
+import STable from "../../components/Table";
+import { accessCategories } from "../../const/access";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../../redux/categories/action";
+import { deleteData } from "../../utils/fetch";
+import SAlert from "../../components/Alert";
 
 export default function Categories() {
   const navigate = useNavigate();
-  let token = localStorage.getItem("token");
+  const dispatch = useDispatch();
 
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const categories = useSelector((state) => state.categories);
+  const alert = useSelector((state) => state.alert);
 
-  const getCategoriesAPI = async () => {
-    try {
-      const res = await axios.get(`${config.url_dev}/cms/categories`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  const [access, setAccess] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+  });
+  // console.log(access);
+  const checkAccess = () => {
+    let { role } = localStorage.getItem("auth")
+      ? JSON.parse(localStorage.getItem("auth"))
+      : null;
 
-      setTimeout(() => {
-        setData(res.data.data);
-        setLoading(false);
-      }, 4000);
-    } catch (err) {
-      console.log(err);
-    }
+    const access = {
+      create: false,
+      edit: false,
+      delete: false,
+    };
+    // console.log(Object.keys(accessCategories));
+    Object.keys(accessCategories).forEach(function (key, index) {
+      // console.log(accessCategories[key]);
+      if (accessCategories[key].indexOf(role) > -1) {
+        access[key] = true;
+      }
+    });
+    setAccess(access);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteData(`/cms/categories/${id}`);
+    dispatch(fetchCategories());
   };
 
   useEffect(() => {
-    // if (!token) {
-    //   return <Navigate to="/signin" replace={true} />;
-    // }
-    getCategoriesAPI();
+    checkAccess();
   }, []);
 
-  return (
-    <>
-      <SNavbar />
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
-      <Container>
-        <SBreadcrumb second="Categories" />
+  return (
+    <Container>
+      <SBreadcrumb second="Categories" />
+
+      {access.create && (
         <SButton
           action={() => navigate("/categories/create")}
           children="Add Categories"
         />
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={3} style={{ textAlign: "center" }}>
-                  <div className="flex item-center justify-center">
-                    <Spinner animation="grow" />
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              data.map((items, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{items.name}</td>
-                  <td>{items.name}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </Table>
-      </Container>
-    </>
+      )}
+
+      {alert.status && (
+        <SAlert variant={alert.alertType} message={alert.message} />
+      )}
+
+      <STable
+        status={categories.status}
+        thead={["Name", "Action"]}
+        data={categories.data}
+        tbody={["name"]}
+        editUrl={access.edit ? `/categories/edit` : null}
+        deleteAction={access.delete ? (id) => handleDelete(id) : null}
+        // withoutPagination
+      ></STable>
+    </Container>
   );
 }

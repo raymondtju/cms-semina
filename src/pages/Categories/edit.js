@@ -2,21 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Container } from "react-bootstrap";
 import SBreadCrumb from "../../components/Breadcrumb";
 import SAlert from "../../components/Alert";
-import Form from "./form";
 import { useNavigate, useParams } from "react-router-dom";
 import CategoriesForm from "./form";
-// import { getData, putData } from "../../utils/fetch";
-// import { useDispatch } from "react-redux";
-// import { setNotif } from "../../redux/notif/actions";
+import { getData, updateData } from "../../utils/fetch";
+import { useDispatch } from "react-redux";
+import { setAlert } from "../../redux/alert/action";
 
-function CategoryEdit() {
+export function CategoryEdit() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { categoryId } = useParams();
+
   const [form, setForm] = useState({
     name: "",
   });
 
-  const [alert, setAlert] = useState({
+  const [alerts, setAlerts] = useState({
     status: false,
     type: "",
     message: "",
@@ -29,8 +30,9 @@ function CategoryEdit() {
   };
 
   const fetchOneCategories = async () => {
-    // const res = await getData(`/cms/categories/${categoryId}`);
-    // setForm({ ...form, name: res.data.data.name });
+    const res = await getData(`/cms/categories/${categoryId}`);
+    // console.log(res);
+    setForm({ ...form, name: res.data.data.name });
   };
 
   useEffect(() => {
@@ -40,26 +42,26 @@ function CategoryEdit() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    // const res = await putData(`/cms/categories/${categoryId}`, form);
-    // if (res?.data?.data) {
-    //   dispatch(
-    //     setNotif(
-    //       true,
-    //       "success",
-    //       `berhasil ubah kategori ${res.data.data.name}`
-    //     )
-    //   );
-    //   navigate("/categories");
-    //   setIsLoading(false);
-    // } else {
-    //   setIsLoading(false);
-    //   setAlert({
-    //     ...alert,
-    //     status: true,
-    //     type: "danger",
-    //     message: res.response.data.msg,
-    //   });
-    // }
+    const res = await updateData(`/cms/categories/${categoryId}`, form);
+    if (res?.data?.data) {
+      dispatch(
+        setAlert(
+          true,
+          "success",
+          `berhasil ubah kategori ${res.data.data.name}`
+        )
+      );
+      navigate("/categories");
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+      setAlerts({
+        ...alert,
+        status: true,
+        type: "danger",
+        message: res.response.data.msg,
+      });
+    }
   };
 
   return (
@@ -69,7 +71,7 @@ function CategoryEdit() {
         urlSecound={"/categories"}
         textThird="Edit"
       />
-      {alert.status && <SAlert type={alert.type} message={alert.message} />}
+      {alerts.status && <SAlert type={alerts.type} message={alerts.message} />}
       <CategoriesForm
         edit
         form={form}
@@ -80,5 +82,3 @@ function CategoryEdit() {
     </Container>
   );
 }
-
-export default CategoryEdit;
