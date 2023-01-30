@@ -9,8 +9,8 @@ import thunk from "redux-thunk";
 import authReducer from "./auth/reducer";
 import categoriesReducer from "./categories/reducer";
 import alertReducer from "./alert/reducer";
-// import talentsReducer from "./talents/reducer";
-// import paymentsReducer from "./payments/reducer";
+import talentsReducer from "./talents/reducer";
+import paymentsReducer from "./payments/reducer";
 // import eventsReducer from "./events/reducer";
 // import listsReducer from "./lists/reducer";
 // import ordersReducer from "./orders/reducer";
@@ -21,8 +21,8 @@ const rootReducers = combineReducers({
   auth: authReducer,
   categories: categoriesReducer,
   alert: alertReducer,
-  //   talents: talentsReducer,
-  //   payments: paymentsReducer,
+  talents: talentsReducer,
+  payments: paymentsReducer,
   //   events: eventsReducer,
   //   lists: listsReducer,
   //   orders: ordersReducer,
