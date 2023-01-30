@@ -1,9 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Spinner } from "react-bootstrap";
-// import moment from "moment";
+import { Image, Spinner } from "react-bootstrap";
+import moment from "moment";
 
 import SButton from "../Button";
+import { config } from "../../configs";
 // import { config } from "../../configs";
 
 function Tbody({
@@ -33,21 +34,21 @@ function Tbody({
               {Object.keys(data).map(
                 (key) =>
                   display.indexOf(key) > -1 && (
-                    // <td key={key}>
-                    //   {key === "avatar" ? (
-                    //     <Image
-                    //       height={40}
-                    //       width={40}
-                    //       roundedCircle
-                    //       src={`${config.api_image}/${data[key]}`}
-                    //     />
-                    //   ) : key === "date" ? (
-                    //     moment(data[key]).format("DD-MM-YYYY, h:mm:ss a")
-                    //   ) : (
-                    //     data[key]
-                    //   )}
-                    // </td>
-                    <td key={key}>{data[key]}</td>
+                    <td key={key}>
+                      {key === "avatar" ? (
+                        <Image
+                          height={40}
+                          width={40}
+                          roundedCircle
+                          src={`${config.imageurl_dev}/${data[key]}`}
+                        />
+                      ) : key === "date" ? (
+                        moment(data[key]).format("DD-MM-YYYY, h:mm:ss a")
+                      ) : (
+                        data[key]
+                      )}
+                    </td>
+                    // <td key={key}>{data[key]}</td>
                   )
               )}
               {!actionNotDisplay && (
