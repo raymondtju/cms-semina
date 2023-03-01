@@ -44,13 +44,7 @@ export function CategoryEdit() {
     setIsLoading(true);
     const res = await updateData(`/cms/categories/${categoryId}`, form);
     if (res?.data?.data) {
-      dispatch(
-        setAlert(
-          true,
-          "success",
-          `berhasil ubah kategori ${res.data.data.name}`
-        )
-      );
+      dispatch(setAlert(true, "success", `changed into ${res.data.data.name}`));
       navigate("/categories");
       setIsLoading(false);
     } else {
@@ -67,9 +61,9 @@ export function CategoryEdit() {
   return (
     <Container className="mt-3">
       <SBreadCrumb
-        textSecound={"Categories"}
-        urlSecound={"/categories"}
-        textThird="Edit"
+        second={"Categories"}
+        secondUrl={"/categories"}
+        third="Edit"
       />
       {alerts.status && <SAlert type={alerts.type} message={alerts.message} />}
       <CategoriesForm
