@@ -5,7 +5,7 @@ import Button from "../../components/Button";
 import TextInputWithLabel from "../../components/TextInputWithLabel";
 import { config } from "../../configs";
 
-export default function SpeakersForm({
+export default function PaymentsForm({
   handleSubmit,
   form,
   handleChange,
@@ -24,8 +24,8 @@ export default function SpeakersForm({
       />
 
       <TextInputWithLabel
-        placeholder={"Insert Avatar"}
-        label={"Avatar"}
+        placeholder={"Insert Image"}
+        label={"Image"}
         name="avatar"
         // value={form.avatar}
         type="file"
